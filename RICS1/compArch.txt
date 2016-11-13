@@ -1,0 +1,33 @@
+// global Variable
+	add r0, #256, r9
+
+//p i=r26, j=r27
+p:	add r27, r26, r10
+	sll r10, #2, r10
+	sub r10, #1, r26	;r26 is r10 in the calling function
+	ret r31, #0			; r31 is r15 in the returning frame
+	add r0, r0, r0		;nop
+
+// q int i = r26
+
+q:	add r0, r9, r10		;put g into r10
+	sub r0, r26, r11	; put -i into r11
+	call 0, p, r15		; call the p function storing the return address in r15
+	add r0, r0, r0		;nop
+	ret r31, #0			; return adress stored in r31
+	add r0, r0, r0		;nop
+
+// f int n = r26
+
+f:	sub r0, r26, r0 {0}	; n<0
+	jle					;jump if it is
+	add r0, r0, r0		; nop
+	sub r26, #1, r10	; n-1
+	call 0, f, r15		; f(n-1)
+	add r0, r0, r0		;nop
+	mul r26, r10, r26	; multiply n*f(n-1)
+	ret r31, #0			; return addr in r31
+	add r0, r0, r0		;nop
+L1: add r0, #1, r26		;move 1 into n when it's 0
+	ret r31, #0			;return 
+	add r0, r0, r0		;nop
